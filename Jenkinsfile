@@ -21,9 +21,15 @@ pipeline {
     stage ('Deploy-To-Tomcat') {
       steps {
         sshagent(['tomcat']) {
-          sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@172.31.14.151:/opt/tomcat/webapps/webapp.war'
+          // Upload the WAR file to a temporary directory
+          sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@172.31.14.151:/tmp/webapp.war'
+
+          // Use SSH to move the WAR file into the Tomcat directory with sudo
+          sh '''
+            ssh ubuntu@172.31.14.151 "sudo mv /tmp/webapp.war /opt/tomcat/webapps/webapp.war"
+          '''
         }      
       }       
     }
   }  
-}  
+}
