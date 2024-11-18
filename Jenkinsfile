@@ -7,21 +7,23 @@ pipeline {
     stage ('Initialize') {
       steps {
         sh '''
-                    echo "PATH = ${PATH}"
-                    echo "M2_HOME = ${M2_HOME}"
-            ''' 
+          echo "PATH = ${PATH}"
+          echo "M2_HOME = ${M2_HOME}"
+        ''' 
       }
     }
     
     stage ('Build') {
       steps {
-      sh 'mvn clean package'
-       }
+        sh 'mvn clean package'
+      }
     }
     stage ('Deploy-To-Tomcat') {
-            steps {
-           sshagent(['tomcat']) {
-                sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@172.31.14.151:/opt/tomcat/webapps/webapp.war'
-              }      
-           }       
+      steps {
+        sshagent(['tomcat']) {
+          sh 'scp -o StrictHostKeyChecking=no target/*.war ubuntu@172.31.14.151:/opt/tomcat/webapps/webapp.war'
+        }      
+      }       
     }
+  }  
+}  
